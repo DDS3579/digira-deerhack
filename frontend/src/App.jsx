@@ -4,6 +4,7 @@ import Login from "@/components/auth/Login.jsx";
 import RegisterUser from "@/components/auth/RegisterUser.jsx";
 import RegisterAdmin from "@/components/auth/RegisterAdmin.jsx";
 import { BrowserRouter } from "react-router-dom";
+import AdminLayout from "./components/layout/AdminLayout";
 
 function RoleRedirect() {}
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/registerUser" element={<RegisterUser />} />
         <Route path="/registerAdmin" element={<RegisterAdmin />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/admin" element={<AdminLayout />} />
       </Routes>
     </BrowserRouter>
   );

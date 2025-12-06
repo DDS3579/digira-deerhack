@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -8,13 +9,52 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { login } from "@/services/api"
 
 export function LoginForm({
   className,
   ...props
 }) {
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    const formData = new FormData(e.target);
+    const credentials = {
+      email: formData.get("email"),
+      password: formData.get("password"),
+    };
+
+    try {
+      const response = await login(credentials);
+      // Store token or user data if provided by the API
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+      }
+      if (response.user) {
+        localStorage.setItem("user", JSON.stringify(response.user));
+      }
+      
+      // Redirect based on user type or to dashboard
+      // You can customize this based on your routing needs
+      if (response.user_type === "admin") {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = "/dashboard";
+      }
+    } catch (err) {
+      setError(err.message || "Login failed. Please check your credentials.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-2xl font-bold">Login to your account</h1>
@@ -22,18 +62,41 @@ export function LoginForm({
             Enter your email below to login to your account
           </p>
         </div>
+
+        {error && (
+          <Field>
+            <FieldDescription className="text-destructive text-center">
+              {error}
+            </FieldDescription>
+          </Field>
+        )}
+
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" type="email" placeholder="m@example.com" className="pl-3" required />
+          <Input 
+            name="email"
+            id="email" 
+            type="email" 
+            placeholder="m@example.com" 
+            className="pl-3" 
+            required 
+          />
         </Field>
         <Field>
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
           </div>
-          <Input id="password" type="password" required />
+          <Input 
+            name="password"
+            id="password" 
+            type="password" 
+            required 
+          />
         </Field>
         <Field>
-          <Button type="submit">Login</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
+          </Button>
         </Field>
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>

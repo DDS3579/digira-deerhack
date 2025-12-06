@@ -1,4 +1,5 @@
 import { GalleryVerticalEnd } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import PasswordFields from "./PasswordFields";
 import {
@@ -9,8 +10,61 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { registerUser } from "@/services/api";
 
 export default function RegisterUser() {
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
+
+    const formData = new FormData(e.target);
+    const formObject = {};
+    formData.forEach((value, key) => {
+      formObject[key] = value;
+    });
+
+    // Get password fields from the form
+    const password = formData.get("password");
+    const confirmPassword = formData.get("confirm_password");
+
+    // Validate password match
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
+    // Prepare data object
+    const data = {
+      full_name: formObject.full_name,
+      house_number: formObject.house_number,
+      profession: formObject.profession,
+      phone: formObject.phone,
+      email: formObject.email,
+      password: password,
+    };
+
+    try {
+      const response = await registerUser(data);
+      setSuccess(response.message || "Registration successful!");
+      e.target.reset();
+      // Optionally redirect after successful registration
+      // setTimeout(() => {
+      //   window.location.href = "/login";
+      // }, 2000);
+    } catch (err) {
+      setError(err.message || "Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -24,7 +78,7 @@ export default function RegisterUser() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <form className={"flex flex-col gap-6"}>
+            <form className={"flex flex-col gap-6"} onSubmit={handleSubmit}>
               <FieldGroup>
                 <div className="flex flex-col items-center gap-1 text-center">
                   <h1 className="text-2xl font-bold">Create your account</h1>
@@ -32,9 +86,27 @@ export default function RegisterUser() {
                     Fill in the form below to create your account
                   </p>
                 </div>
+
+                {error && (
+                  <Field>
+                    <FieldDescription className="text-destructive text-center">
+                      {error}
+                    </FieldDescription>
+                  </Field>
+                )}
+
+                {success && (
+                  <Field>
+                    <FieldDescription className="text-green-600 text-center">
+                      {success}
+                    </FieldDescription>
+                  </Field>
+                )}
+
                 <Field>
                   <FieldLabel htmlFor="name">Full Name</FieldLabel>
                   <Input
+                    name="full_name"
                     id="name"
                     type="text"
                     placeholder="Hari Bahadur"
@@ -42,8 +114,9 @@ export default function RegisterUser() {
                   />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="email">House Number</FieldLabel>
+                  <FieldLabel htmlFor="house-number">House Number</FieldLabel>
                   <Input
+                    name="house_number"
                     id="house-number"
                     type="number"
                     placeholder="567"
@@ -51,17 +124,19 @@ export default function RegisterUser() {
                   />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="email">Profession</FieldLabel>
+                  <FieldLabel htmlFor="profession">Profession</FieldLabel>
                   <Input
+                    name="profession"
                     id="profession"
                     type="text"
-                    placeholder="567"
+                    placeholder="e.g. Engineer"
                     required
                   />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="email">Phone Number</FieldLabel>
+                  <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
                   <Input
+                    name="phone"
                     id="phone"
                     type="number"
                     placeholder="9841XXXXXX"
@@ -71,6 +146,7 @@ export default function RegisterUser() {
                 <Field>
                   <FieldLabel htmlFor="email">Email</FieldLabel>
                   <Input
+                    name="email"
                     id="email"
                     type="email"
                     placeholder="haribahadur@example.com"
@@ -95,7 +171,9 @@ export default function RegisterUser() {
                 </Field> */}
                 <PasswordFields />
                 <Field>
-                  <Button type="submit">Create Account</Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? "Creating Account..." : "Create Account"}
+                  </Button>
                 </Field>
               </FieldGroup>
               <FieldDescription className="text-center">
