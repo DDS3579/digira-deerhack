@@ -2,26 +2,27 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { MessageSquare, CheckCircle, XCircle, Clock } from "lucide-react";
-import { getComplaints } from "@/services/api";
+import { HelpCircle, CheckCircle, Clock, User } from "lucide-react";
+import { getHelpRequests } from "@/services/api";
+import { motion } from "framer-motion";
 
-export default function ViewComplaints() {
-  const [complaints, setComplaints] = useState([]);
+export default function HelpRequests() {
+  const [helpRequests, setHelpRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all"); // all, pending, resolved
 
   useEffect(() => {
-    fetchComplaints();
+    fetchHelpRequests();
   }, []);
 
-  const fetchComplaints = async () => {
+  const fetchHelpRequests = async () => {
     try {
       setLoading(true);
-      const data = await getComplaints();
-      setComplaints(data || []);
+      const data = await getHelpRequests();
+      setHelpRequests(data || []);
     } catch (error) {
-      console.error("Error fetching complaints:", error);
-      setComplaints([]);
+      console.error("Error fetching help requests:", error);
+      setHelpRequests([]);
     } finally {
       setLoading(false);
     }
@@ -39,30 +40,35 @@ export default function ViewComplaints() {
     });
   };
 
-  const filteredComplaints = complaints.filter(complaint => {
+  const filteredRequests = helpRequests.filter(request => {
     if (filter === "all") return true;
-    if (filter === "pending") return complaint.status !== "resolved";
-    if (filter === "resolved") return complaint.status === "resolved";
+    if (filter === "pending") return request.status !== "resolved";
+    if (filter === "resolved") return request.status === "resolved";
     return true;
   });
 
-  const handleStatusChange = async (complaintId, newStatus) => {
-    // TODO: Implement API call to update complaint status
-    setComplaints(prev => 
-      prev.map(c => c.id === complaintId ? { ...c, status: newStatus } : c)
+  const handleStatusChange = async (requestId, newStatus) => {
+    // TODO: Implement API call to update help request status
+    setHelpRequests(prev => 
+      prev.map(r => r.id === requestId ? { ...r, status: newStatus } : r)
     );
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Complaints</h1>
-          <p className="text-muted-foreground">
-            Manage and resolve community complaints
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Help Requests</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage community help requests and assistance needs
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Filter Buttons */}
       <div className="flex gap-2">
@@ -71,64 +77,74 @@ export default function ViewComplaints() {
           size="sm"
           onClick={() => setFilter("all")}
         >
-          All ({complaints.length})
+          All ({helpRequests.length})
         </Button>
         <Button
           variant={filter === "pending" ? "default" : "outline"}
           size="sm"
           onClick={() => setFilter("pending")}
         >
-          Pending ({complaints.filter(c => c.status !== "resolved").length})
+          Pending ({helpRequests.filter(r => r.status !== "resolved").length})
         </Button>
         <Button
           variant={filter === "resolved" ? "default" : "outline"}
           size="sm"
           onClick={() => setFilter("resolved")}
         >
-          Resolved ({complaints.filter(c => c.status === "resolved").length})
+          Resolved ({helpRequests.filter(r => r.status === "resolved").length})
         </Button>
       </div>
 
       {loading ? (
         <div className="text-center py-12 text-muted-foreground">
-          Loading complaints...
+          Loading help requests...
         </div>
-      ) : filteredComplaints.length === 0 ? (
+      ) : filteredRequests.length === 0 ? (
         <Card>
           <CardContent className="py-12">
             <div className="text-center">
-              <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">No Complaints Found</h3>
+              <HelpCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <h3 className="text-lg font-semibold mb-2">No Help Requests Found</h3>
               <p className="text-muted-foreground">
                 {filter !== "all" 
-                  ? `No ${filter} complaints at the moment`
-                  : "No complaints have been submitted yet"}
+                  ? `No ${filter} help requests at the moment`
+                  : "No help requests have been submitted yet"}
               </p>
             </div>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
-          {filteredComplaints.map((complaint, index) => (
-            <Card key={complaint.id || index}>
+          {filteredRequests.map((request, index) => (
+            <motion.div
+              key={request.id || index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+              whileHover={{ y: -2 }}
+            >
+              <Card>
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-lg">
-                      {complaint.title || complaint.subject || "Untitled Complaint"}
+                      {request.title || request.subject || "Help Request"}
                     </CardTitle>
                     <CardDescription className="flex items-center gap-4 mt-2">
-                      <span>{formatDate(complaint.created_at || complaint.date)}</span>
-                      {complaint.user_name && (
+                      <span>{formatDate(request.created_at || request.date)}</span>
+                      {request.user_name && (
                         <>
                           <Separator orientation="vertical" className="h-4" />
-                          <span>By: {complaint.user_name}</span>
+                          <span className="flex items-center gap-1">
+                            <User className="h-3 w-3" />
+                            {request.user_name}
+                          </span>
                         </>
                       )}
                     </CardDescription>
                   </div>
                   <div className="flex items-center gap-2">
-                    {complaint.status === "resolved" ? (
+                    {request.status === "resolved" ? (
                       <span className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                         <CheckCircle className="h-3 w-3" />
                         Resolved
@@ -144,18 +160,23 @@ export default function ViewComplaints() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  {complaint.description || complaint.content || "No description available"}
+                  {request.description || request.content || "No description available"}
                 </p>
-                {complaint.latitude && complaint.longitude && (
+                {request.location && (
                   <div className="text-xs text-muted-foreground mb-4">
-                    Location: {complaint.latitude}, {complaint.longitude}
+                    Location: {request.location}
                   </div>
                 )}
-                {complaint.status !== "resolved" && (
+                {request.contact && (
+                  <div className="text-xs text-muted-foreground mb-4">
+                    Contact: {request.contact}
+                  </div>
+                )}
+                {request.status !== "resolved" && (
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleStatusChange(complaint.id, "resolved")}
+                    onClick={() => handleStatusChange(request.id, "resolved")}
                   >
                     <CheckCircle className="mr-2 h-4 w-4" />
                     Mark as Resolved
@@ -163,6 +184,7 @@ export default function ViewComplaints() {
                 )}
               </CardContent>
             </Card>
+            </motion.div>
           ))}
         </div>
       )}

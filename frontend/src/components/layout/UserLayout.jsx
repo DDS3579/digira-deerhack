@@ -1,3 +1,5 @@
+import { Outlet, useLocation } from "react-router-dom"
+import { motion, AnimatePresence } from "framer-motion"
 import { UserSidebar } from "@/components/layout/UserSidebar"
 import {
   Breadcrumb,
@@ -13,14 +15,30 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import Chatbot from "@/components/Chatbot"
 
-export default function UserLayout({ children }) {
+export default function UserLayout() {
+  const location = useLocation()
+  
+  const getPageTitle = () => {
+    const path = location.pathname
+    if (path.includes("/dashboard")) return "Dashboard"
+    if (path.includes("/samachar")) return "Samachar"
+    if (path.includes("/lost-found")) return "Lost & Found"
+    if (path.includes("/invitation")) return "Invitations"
+    if (path.includes("/add-problem")) return "Add Problem"
+    if (path.includes("/ask-help")) return "Ask Help"
+    if (path.includes("/send-request")) return "Send Request"
+    if (path.includes("/profile")) return "Profile"
+    return "Overview"
+  }
+
   return (
     <SidebarProvider>
       <UserSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-sm border-b border-border/50">
+          <div className="flex items-center gap-2 px-4 md:px-6">
             <SidebarTrigger className="-ml-1" />
             <Separator
               orientation="vertical"
@@ -29,22 +47,33 @@ export default function UserLayout({ children }) {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
+                  <BreadcrumbLink href="/user/dashboard">
                     User Dashboard
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Overview</BreadcrumbPage>
+                  <BreadcrumbPage>{getPageTitle()}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {children}
+        <div className="flex flex-1 flex-col gap-6 p-6 pt-0 md:p-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </SidebarInset>
+      <Chatbot />
     </SidebarProvider>
   )
 }
