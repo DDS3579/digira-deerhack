@@ -25,7 +25,7 @@ export function LoginForm({
 
     const formData = new FormData(e.target);
     const credentials = {
-      email: formData.get("email"),
+      phone: formData.get("phone"),
       password: formData.get("password"),
     };
 
@@ -59,7 +59,7 @@ export function LoginForm({
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-2xl font-bold">Login to your account</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            Enter your email below to login to your account
+            Enter your phone number below to login to your account
           </p>
         </div>
 
@@ -72,12 +72,12 @@ export function LoginForm({
         )}
 
         <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <FieldLabel htmlFor="email">Phone Number</FieldLabel>
           <Input 
-            name="email"
-            id="email" 
-            type="email" 
-            placeholder="m@example.com" 
+            name="phone"
+            id="phone" 
+            type="number" 
+            placeholder="984XXXXXXXXX" 
             className="pl-3" 
             required 
           />
