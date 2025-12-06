@@ -1,72 +1,31 @@
-/**
- * Register a ward admin
- * @param {Object} data - Admin registration data
- * @returns {Promise<Object>} Response from the API
- */
-export const registerWardAdmin = async (data) => {
-  try {
-    const response = await fetch('http://localhost:8000/api/auth/ward_register.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.message || 'Registration failed');
-    }
-
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};
+// Base URL
+const BASE_URL = 'http://localhost:8000/api/';
 
 /**
- * Register a user
- * @param {Object} data - User registration data
- * @returns {Promise<Object>} Response from the API
- */
-export const registerUser = async (data) => {
-  try {
-    const response = await fetch('https://localhost:8000/api/auth/register.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.message || 'Registration failed');
-    }
-
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * Login user or admin
- * @param {Object} credentials - Login credentials (email, password)
- * @returns {Promise<Object>} Response from the API
+ * Login user or admin - SIMPLIFIED to avoid CORS
  */
 export const login = async (credentials) => {
   try {
-    const response = await fetch('https://localhost:8000/api/auth/login.php', {
+    console.log("Login attempt with:", credentials);
+    
+    // Create unique URL with timestamp
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(7);
+    const url = `${BASE_URL}auth/login.php?nocache=${timestamp}&rand=${random}`;
+    
+    console.log("Login URL:", url);
+    
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        // NO CUSTOM HEADERS HERE - they trigger CORS preflight
       },
       body: JSON.stringify(credentials),
     });
 
+    console.log('Login response status:', response.status);
+    
     const result = await response.json();
     
     if (!response.ok) {
@@ -75,7 +34,67 @@ export const login = async (credentials) => {
 
     return result;
   } catch (error) {
+    console.error('Login error:', error);
     throw error;
   }
 };
 
+/**
+ * Register a ward admin
+ */
+export const registerWardAdmin = async (data) => {
+  console.log("Registering ward admin:", data);
+  const response = await fetch(`${BASE_URL}auth/ward_register.php?nocache=${Date.now()}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  
+  const result = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(result.message || 'Registration failed');
+  }
+  
+  return result;
+};
+
+/**
+ * Register a user
+ */
+export const registerUser = async (data) => {
+  console.log("Registering user:", data);
+  const response = await fetch(`${BASE_URL}auth/register.php?nocache=${Date.now()}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  
+  const result = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(result.message || 'Registration failed');
+  }
+  
+  return result;
+};
+
+/**
+ * Get all wards for dropdown
+ */
+export const getWards = async () => {
+  console.log("Fetching wards...");
+  const response = await fetch(`${BASE_URL}ward/get_wards.php?nocache=${Date.now()}`);
+  
+  const result = await response.json();
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch wards');
+  }
+  
+  return result;
+};
