@@ -1,0 +1,66 @@
+tole-mitra/
+├── frontend/                          # React App
+│   ├── public/
+│   │   ├── index.html
+│   │   └── favicon.ico
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── auth/
+│   │   │   │   ├── Login.jsx
+│   │   │   │   └── Signup.jsx
+│   │   │   ├── user/
+│   │   │   │   ├── Dashboard.jsx     # Main user view
+│   │   │   │   ├── PanicButton.jsx   # Emergency to Ward Chairman
+│   │   │   │   ├── UrgentHelp.jsx    # Community help request
+│   │   │   │   ├── Invitation.jsx    # Send invitations
+│   │   │   │   ├── ComplaintsList.jsx # See all complaints
+│   │   │   │   └── CreatePost.jsx    # Generic post creation
+│   │   │   ├── admin/
+│   │   │   │   ├── AdminDashboard.jsx # Ward Chairman view
+│   │   │   │   ├── CreateTole.jsx    # Create new tole
+│   │   │   │   ├── ManageUsers.jsx   # See all tole members
+│   │   │   │   ├── ViewComplaints.jsx # All panic buttons
+│   │   │   │   └── Analytics.jsx     # Quick stats
+│   │   │   ├── shared/
+│   │   │   │   ├── Navbar.jsx
+│   │   │   │   ├── PostCard.jsx      # Reusable post component
+│   │   │   │   └── Modal.jsx         # Reusable modal
+│   │   ├── services/
+│   │   │   └── api.js                # All API calls centralized
+│   │   ├── utils/
+│   │   │   └── helpers.js            # Date formatting, etc.
+│   │   ├── App.jsx                   # Main routing
+│   │   ├── App.css                   # Global styles
+│   │   └── index.js
+│   └── package.json
+│
+├── backend/                           # PHP API
+│   ├── config/
+│   │   └── database.php              # DB connection
+│   ├── api/
+│   │   ├── auth/
+│   │   │   ├── login.php
+│   │   │   ├── signup.php
+│   │   │   └── logout.php
+│   │   ├── tole/
+│   │   │   ├── create.php            # Admin creates tole
+│   │   │   ├── get_users.php         # Get all tole members
+│   │   │   └── join.php              # User joins tole
+│   │   ├── posts/
+│   │   │   ├── create.php            # Create panic/help/invitation
+│   │   │   ├── get_all.php           # Get all posts in tole
+│   │   │   ├── update_status.php     # Admin resolves complaint
+│   │   │   └── delete.php
+│   │   └── admin/
+│   │       ├── dashboard_stats.php   # Get counts for admin
+│   │       └── resolve_panic.php     # Mark panic as resolved
+│   ├── models/
+│   │   ├── User.php                  # User model with methods
+│   │   ├── Tole.php                  # Tole model
+│   │   └── Post.php                  # Post model (complaints/help/invites)
+│   └── utils/
+│       ├── cors.php                  # Handle CORS headers
+│       └── jwt.php                   # Simple auth token handling
+│
+└── database/
+    └── schema.sql                     # Database structure
