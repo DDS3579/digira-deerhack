@@ -5,7 +5,7 @@
  */
 export const registerWardAdmin = async (data) => {
   try {
-    const response = await fetch('http://localhost:8000/api/auth/ward_register', {
+    const response = await fetch('/api/auth/ward_register.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export const registerWardAdmin = async (data) => {
  */
 export const registerUser = async (data) => {
   try {
-    const response = await fetch('https://localhost:8000/api/auth/register', {
+    const response = await fetch('/api/auth/register.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,13 +59,49 @@ export const registerUser = async (data) => {
  */
 export const login = async (credentials) => {
   try {
-    const response = await fetch('https://localhost:8000/api/auth/login', {
+    // Add cache-busting query parameter to prevent 304 responses
+    const url = `/api/auth/login.php?_t=${Date.now()}`;
+    
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
+      cache: 'no-store',
       body: JSON.stringify(credentials),
     });
+
+    // Handle 304 Not Modified status - retry with new timestamp
+    if (response.status === 304) {
+      const retryUrl = `/api/auth/login.php?_t=${Date.now()}`;
+      const retryResponse = await fetch(retryUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+        cache: 'no-store',
+        body: JSON.stringify(credentials),
+      });
+      
+      if (!retryResponse.ok) {
+        throw new Error('Login failed. Please try again.');
+      }
+      
+      const result = await retryResponse.json();
+      return result;
+    }
+
+    // Check if response has content before parsing JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid response from server');
+    }
 
     const result = await response.json();
     
@@ -75,6 +111,10 @@ export const login = async (credentials) => {
 
     return result;
   } catch (error) {
+    // If JSON parsing fails, provide a more helpful error message
+    if (error instanceof SyntaxError) {
+      throw new Error('Invalid response from server. Please try again.');
+    }
     throw error;
   }
 };
@@ -88,8 +128,8 @@ export const getComplaints = async (limit = null) => {
   try {
     const token = localStorage.getItem('token');
     const url = limit 
-      ? `http://localhost:8000/api/posts/get_all.php?type=complaint&limit=${limit}`
-      : 'http://localhost:8000/api/posts/get_all.php?type=complaint';
+      ? `/api/posts/get_all.php?type=complaint&limit=${limit}`
+      : '/api/posts/get_all.php?type=complaint';
     
     const response = await fetch(url, {
       method: 'GET',
@@ -120,8 +160,8 @@ export const getSamachar = async (limit = null) => {
   try {
     const token = localStorage.getItem('token');
     const url = limit 
-      ? `http://localhost:8000/api/posts/get_all.php?type=update&limit=${limit}`
-      : 'http://localhost:8000/api/posts/get_all.php?type=update';
+      ? `/api/posts/get_all.php?type=update&limit=${limit}`
+      : '/api/posts/get_all.php?type=update';
     
     const response = await fetch(url, {
       method: 'GET',
@@ -150,7 +190,7 @@ export const getSamachar = async (limit = null) => {
 export const getEvents = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch('http://localhost:8000/api/posts/get_all.php?type=event', {
+    const response = await fetch('/api/posts/get_all.php?type=event', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -179,8 +219,8 @@ export const getHelpRequests = async (limit = null) => {
   try {
     const token = localStorage.getItem('token');
     const url = limit 
-      ? `http://localhost:8000/api/posts/get_all.php?type=help&limit=${limit}`
-      : 'http://localhost:8000/api/posts/get_all.php?type=help';
+      ? `/api/posts/get_all.php?type=help&limit=${limit}`
+      : '/api/posts/get_all.php?type=help';
     
     const response = await fetch(url, {
       method: 'GET',
@@ -211,8 +251,8 @@ export const getLostFound = async (limit = null) => {
   try {
     const token = localStorage.getItem('token');
     const url = limit 
-      ? `http://localhost:8000/api/posts/get_all.php?type=lost_found&limit=${limit}`
-      : 'http://localhost:8000/api/posts/get_all.php?type=lost_found';
+      ? `/api/posts/get_all.php?type=lost_found&limit=${limit}`
+      : '/api/posts/get_all.php?type=lost_found';
     
     const response = await fetch(url, {
       method: 'GET',
@@ -243,8 +283,8 @@ export const getInvitations = async (limit = null) => {
   try {
     const token = localStorage.getItem('token');
     const url = limit 
-      ? `http://localhost:8000/api/posts/get_all.php?type=invitation&limit=${limit}`
-      : 'http://localhost:8000/api/posts/get_all.php?type=invitation';
+      ? `/api/posts/get_all.php?type=invitation&limit=${limit}`
+      : '/api/posts/get_all.php?type=invitation';
     
     const response = await fetch(url, {
       method: 'GET',

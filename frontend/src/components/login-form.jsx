@@ -42,9 +42,9 @@ export function LoginForm({
       
       // Redirect based on user type
       if (response.user_type === "ward_admin") {
-        window.location.href = "/ward/dashboard";
+        window.location.href = "/admin";
       } else {
-        window.location.href = "/dashboard";
+        window.location.href = "/user";
       }
     } catch (err) {
       setError(err.message || "Login failed. Please check your credentials.");

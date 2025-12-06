@@ -30,7 +30,7 @@ class Database {
     private $host = "localhost";
     private $db_name = "tolemitra";
     private $username = "root";
-    private $password = "";
+    private $password = "peacefultorch3579";
     public $conn;
 
     public function getConnection() {

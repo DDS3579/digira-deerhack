@@ -15,10 +15,14 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Disable caching
-header("Cache-Control: no-store, no-cache, must-revalidate");
+// Disable caching completely
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
+header("Expires: 0");
+// Prevent ETag and Last-Modified headers that could cause 304 responses
+header_remove("ETag");
+header_remove("Last-Modified");
 
 // Include database
 require_once '../../config/database.php';

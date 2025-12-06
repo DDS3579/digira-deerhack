@@ -1,0 +1,77 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Community Meeting Scheduled",
+      "description": "A community meeting has been scheduled for next Saturday at 2 PM in the community hall. All residents are requested to attend to discuss upcoming development projects.",
+      "user_name": "Ward Admin",
+      "user_id": 1,
+      "created_at": "2024-01-15T09:00:00Z",
+      "date": "2024-01-15T09:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "New Water Supply Schedule",
+      "description": "Starting from next week, water supply will be available from 6 AM to 8 AM and 6 PM to 8 PM daily. Please store water accordingly.",
+      "user_name": "Ward Admin",
+      "user_id": 1,
+      "created_at": "2024-01-14T10:30:00Z",
+      "date": "2024-01-14T10:30:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Health Camp Announcement",
+      "description": "A free health camp will be organized on January 25th from 9 AM to 4 PM at the community center. Free checkups for blood pressure, diabetes, and general health will be available.",
+      "user_name": "Ward Admin",
+      "user_id": 1,
+      "created_at": "2024-01-13T11:15:00Z",
+      "date": "2024-01-13T11:15:00Z"
+    },
+    {
+      "id": 4,
+      "title": "Garbage Collection Update",
+      "description": "Garbage collection schedule has been updated. Collection will happen on Monday, Wednesday, and Friday mornings. Please keep your bins outside by 7 AM.",
+      "user_name": "Ward Admin",
+      "user_id": 1,
+      "created_at": "2024-01-12T14:20:00Z",
+      "date": "2024-01-12T14:20:00Z"
+    },
+    {
+      "id": 5,
+      "title": "Road Repair Notice",
+      "description": "Road repair work will begin on Main Street from January 20th to January 25th. Please use alternative routes during this period. We apologize for any inconvenience.",
+      "user_name": "Ward Admin",
+      "user_id": 1,
+      "created_at": "2024-01-11T08:45:00Z",
+      "date": "2024-01-11T08:45:00Z"
+    },
+    {
+      "id": 6,
+      "title": "Community Cleanup Drive",
+      "description": "Join us for a community cleanup drive this Sunday at 7 AM. We'll be cleaning the park and surrounding areas. Refreshments will be provided.",
+      "user_name": "Ward Admin",
+      "user_id": 1,
+      "created_at": "2024-01-10T16:30:00Z",
+      "date": "2024-01-10T16:30:00Z"
+    },
+    {
+      "id": 7,
+      "title": "Electricity Maintenance",
+      "description": "Scheduled electricity maintenance on January 18th from 9 AM to 12 PM. Power supply will be interrupted during this time. Please plan accordingly.",
+      "user_name": "Ward Admin",
+      "user_id": 1,
+      "created_at": "2024-01-09T12:00:00Z",
+      "date": "2024-01-09T12:00:00Z"
+    },
+    {
+      "id": 8,
+      "title": "New Community Library Opening",
+      "description": "We're excited to announce the opening of our new community library on January 22nd. It will be open from 9 AM to 6 PM daily. All residents are welcome!",
+      "user_name": "Ward Admin",
+      "user_id": 1,
+      "created_at": "2024-01-08T10:00:00Z",
+      "date": "2024-01-08T10:00:00Z"
+    }
+  ]
+}
+
