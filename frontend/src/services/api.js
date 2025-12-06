@@ -170,3 +170,99 @@ export const getEvents = async () => {
   }
 };
 
+/**
+ * Get help requests
+ * @param {number} limit - Number of requests to fetch
+ * @returns {Promise<Array>} Array of help requests
+ */
+export const getHelpRequests = async (limit = null) => {
+  try {
+    const token = localStorage.getItem('token');
+    const url = limit 
+      ? `http://localhost:8000/api/posts/get_all.php?type=help&limit=${limit}`
+      : 'http://localhost:8000/api/posts/get_all.php?type=help';
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to fetch help requests');
+    }
+
+    return result.data || result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Get lost & found items
+ * @param {number} limit - Number of items to fetch
+ * @returns {Promise<Array>} Array of lost & found items
+ */
+export const getLostFound = async (limit = null) => {
+  try {
+    const token = localStorage.getItem('token');
+    const url = limit 
+      ? `http://localhost:8000/api/posts/get_all.php?type=lost_found&limit=${limit}`
+      : 'http://localhost:8000/api/posts/get_all.php?type=lost_found';
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to fetch lost & found items');
+    }
+
+    return result.data || result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Get invitations
+ * @param {number} limit - Number of invitations to fetch
+ * @returns {Promise<Array>} Array of invitations
+ */
+export const getInvitations = async (limit = null) => {
+  try {
+    const token = localStorage.getItem('token');
+    const url = limit 
+      ? `http://localhost:8000/api/posts/get_all.php?type=invitation&limit=${limit}`
+      : 'http://localhost:8000/api/posts/get_all.php?type=invitation';
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to fetch invitations');
+    }
+
+    return result.data || result;
+  } catch (error) {
+    throw error;
+  }
+};
+

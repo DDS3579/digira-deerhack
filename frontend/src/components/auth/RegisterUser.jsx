@@ -123,6 +123,7 @@ export default function RegisterUser() {
                     required
                   />
                 </Field>
+                
                 <Field>
                   <FieldLabel htmlFor="profession">Profession</FieldLabel>
                   <Input

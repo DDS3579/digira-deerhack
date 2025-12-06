@@ -9,6 +9,7 @@ import {
   User,
   ChevronsUpDown,
   LogOut,
+  Calendar,
 } from "lucide-react"
 
 import {
@@ -50,6 +51,11 @@ const adminMenuItems = [
     title: "Complaints",
     icon: MessageSquare,
     url: "/admin/complaints",
+  },
+  {
+    title: "Events",
+    icon: Calendar,
+    url: "/admin/events",
   },
   {
     title: "Help Requests",
@@ -97,7 +103,7 @@ export function AdminSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      isActive={location.pathname === item.url}
+                      isActive={location.pathname === item.url || location.pathname.startsWith(item.url + "/")}
                     >
                       <Link to={item.url}>
                         <Icon />
@@ -161,7 +167,13 @@ export function AdminSidebar() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('adminProfile');
+                    window.location.href = '/login';
+                  }}
+                >
                   <LogOut />
                   Log out
                   <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

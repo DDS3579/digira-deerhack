@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
+import { useState, useEffect } from "react"
 import {
   Home,
   Newspaper,
@@ -10,7 +11,9 @@ import {
   AlertCircle,
   HelpCircle,
   Send,
+  Bell,
 } from "lucide-react"
+import { getHelpRequests } from "@/services/api"
 
 import {
   Sidebar,
@@ -57,6 +60,12 @@ const userMenuItems = [
     icon: Mail,
     url: "/user/invitation",
   },
+  {
+    title: "Help Requests",
+    icon: Bell,
+    url: "/user/help-requests",
+    showNotification: true,
+  },
 ]
 
 const actionButtons = [
@@ -64,21 +73,43 @@ const actionButtons = [
     title: "Add Problem",
     icon: AlertCircle,
     url: "/user/add-problem",
+    bgColor: "bg-red-500 hover:bg-red-600 text-white",
   },
   {
     title: "Ask Help",
     icon: HelpCircle,
     url: "/user/ask-help",
+    bgColor: "bg-green-500 hover:bg-green-600 text-white",
   },
   {
     title: "Send Request",
     icon: Send,
     url: "/user/send-request",
+    bgColor: "bg-blue-500 hover:bg-blue-600 text-white",
   },
 ]
 
 export function UserSidebar() {
   const location = useLocation()
+  const [pendingHelpRequestsCount, setPendingHelpRequestsCount] = useState(0)
+
+  useEffect(() => {
+    const fetchHelpRequestsCount = async () => {
+      try {
+        const data = await getHelpRequests()
+        const pendingCount = (data || []).filter(r => r.status !== "resolved").length
+        setPendingHelpRequestsCount(pendingCount)
+      } catch (error) {
+        console.error("Error fetching help requests count:", error)
+        setPendingHelpRequestsCount(0)
+      }
+    }
+
+    fetchHelpRequestsCount()
+    // Refresh count every 30 seconds
+    const interval = setInterval(fetchHelpRequestsCount, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <Sidebar>
@@ -100,19 +131,28 @@ export function UserSidebar() {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {userMenuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.url}
-                  >
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {userMenuItems.map((item) => {
+                const Icon = item.icon
+                const hasNotification = item.showNotification && pendingHelpRequestsCount > 0
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={location.pathname === item.url || location.pathname.startsWith(item.url + "/")}
+                    >
+                      <Link to={item.url} className="relative">
+                        <Icon />
+                        <span>{item.title}</span>
+                        {hasNotification && (
+                          <span className="absolute right-2 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-semibold text-white">
+                            {pendingHelpRequestsCount > 9 ? '9+' : pendingHelpRequestsCount}
+                          </span>
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -125,7 +165,11 @@ export function UserSidebar() {
                 const Icon = button.icon
                 return (
                   <SidebarMenuItem key={button.title}>
-                    <SidebarMenuButton asChild variant="outline">
+                    <SidebarMenuButton 
+                      asChild 
+                      isActive={location.pathname === button.url || location.pathname.startsWith(button.url + "/")}
+                      className={`${button.bgColor} border-0`}
+                    >
                       <Link to={button.url}>
                         <Icon />
                         <span>{button.title}</span>
@@ -187,7 +231,13 @@ export function UserSidebar() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userProfile');
+                    window.location.href = '/login';
+                  }}
+                >
                   <LogOut />
                   Log out
                   <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
