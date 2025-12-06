@@ -6,6 +6,7 @@ import { MessageCircle, Send, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GoogleGenAI } from "@google/genai";
 import { getComplaints, getSamachar, getEvents, getHelpRequests, getLostFound, getInvitations } from "@/services/api";
+import ReactMarkdown from "react-markdown";
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -364,9 +365,40 @@ export default function Chatbot() {
                       : "bg-muted text-muted-foreground"
                   )}
                 >
-                  <p className="whitespace-pre-wrap break-words">
-                    {message.content}
-                  </p>
+                  {message.role === "assistant" ? (
+                    <div className="prose prose-sm dark:prose-invert max-w-none break-words">
+                      <ReactMarkdown
+                        components={{
+                          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                          ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                          ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                          li: ({ children }) => <li className="ml-2">{children}</li>,
+                          code: ({ children, className }) => {
+                            const isInline = !className;
+                            return isInline ? (
+                              <code className="bg-muted/50 px-1 py-0.5 rounded text-xs font-mono">{children}</code>
+                            ) : (
+                              <code className="block bg-muted/50 p-2 rounded text-xs font-mono overflow-x-auto">{children}</code>
+                            );
+                          },
+                          pre: ({ children }) => <pre className="bg-muted/50 p-2 rounded text-xs font-mono overflow-x-auto mb-2">{children}</pre>,
+                          h1: ({ children }) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
+                          h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
+                          h3: ({ children }) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
+                          blockquote: ({ children }) => <blockquote className="border-l-4 border-muted-foreground/30 pl-3 italic mb-2">{children}</blockquote>,
+                          a: ({ href, children }) => <a href={href} className="text-primary underline" target="_blank" rel="noopener noreferrer">{children}</a>,
+                          strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                          em: ({ children }) => <em className="italic">{children}</em>,
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="whitespace-pre-wrap break-words">
+                      {message.content}
+                    </p>
+                  )}
                   <span className="text-xs opacity-70 mt-1 block">
                     {message.timestamp.toLocaleTimeString([], {
                       hour: "2-digit",
