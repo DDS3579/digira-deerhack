@@ -5,7 +5,7 @@
  */
 export const registerWardAdmin = async (data) => {
   try {
-    const response = await fetch('http://localhost:8000/api/auth/ward_register.php', {
+    const response = await fetch('http://localhost:8000/api/auth/ward_register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export const registerWardAdmin = async (data) => {
  */
 export const registerUser = async (data) => {
   try {
-    const response = await fetch('https://localhost:8000/api/auth/register.php', {
+    const response = await fetch('https://localhost:8000/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export const registerUser = async (data) => {
  */
 export const login = async (credentials) => {
   try {
-    const response = await fetch('https://localhost:8000/api/auth/login.php', {
+    const response = await fetch('https://localhost:8000/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -74,6 +74,97 @@ export const login = async (credentials) => {
     }
 
     return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Get complaints for admin
+ * @param {number} limit - Number of complaints to fetch
+ * @returns {Promise<Array>} Array of complaints
+ */
+export const getComplaints = async (limit = null) => {
+  try {
+    const token = localStorage.getItem('token');
+    const url = limit 
+      ? `http://localhost:8000/api/posts/get_all.php?type=complaint&limit=${limit}`
+      : 'http://localhost:8000/api/posts/get_all.php?type=complaint';
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to fetch complaints');
+    }
+
+    return result.data || result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Get samachar/updates
+ * @param {number} limit - Number of updates to fetch
+ * @returns {Promise<Array>} Array of updates
+ */
+export const getSamachar = async (limit = null) => {
+  try {
+    const token = localStorage.getItem('token');
+    const url = limit 
+      ? `http://localhost:8000/api/posts/get_all.php?type=update&limit=${limit}`
+      : 'http://localhost:8000/api/posts/get_all.php?type=update';
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to fetch samachar');
+    }
+
+    return result.data || result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Get events
+ * @returns {Promise<Array>} Array of events
+ */
+export const getEvents = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch('http://localhost:8000/api/posts/get_all.php?type=event', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to fetch events');
+    }
+
+    return result.data || result;
   } catch (error) {
     throw error;
   }
