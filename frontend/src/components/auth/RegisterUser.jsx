@@ -1,20 +1,20 @@
 import { GalleryVerticalEnd } from "lucide-react";
-// import { SignupForm } from "@/components/signup-form";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import PasswordFields from "./PasswordFields";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export default function RegisterUser() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
+        <div className="h-16 grid place-items-center">
           <a href="#" className="flex items-center gap-2 font-medium">
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
               <GalleryVerticalEnd className="size-4" />
@@ -41,7 +41,7 @@ export default function RegisterUser() {
                     required
                   />
                 </Field>
-                                                <Field>
+                <Field>
                   <FieldLabel htmlFor="email">House Number</FieldLabel>
                   <Input
                     id="house-number"
@@ -49,10 +49,8 @@ export default function RegisterUser() {
                     placeholder="567"
                     required
                   />
-                  <FieldDescription>
-                  </FieldDescription>
                 </Field>
-                                                                <Field>
+                <Field>
                   <FieldLabel htmlFor="email">Profession</FieldLabel>
                   <Input
                     id="profession"
@@ -60,10 +58,8 @@ export default function RegisterUser() {
                     placeholder="567"
                     required
                   />
-                  <FieldDescription>
-                  </FieldDescription>
                 </Field>
-                                <Field>
+                <Field>
                   <FieldLabel htmlFor="email">Phone Number</FieldLabel>
                   <Input
                     id="phone"
@@ -71,8 +67,6 @@ export default function RegisterUser() {
                     placeholder="9841XXXXXX"
                     required
                   />
-                  <FieldDescription>
-                  </FieldDescription>
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -82,10 +76,8 @@ export default function RegisterUser() {
                     placeholder="haribahadur@example.com"
                     required
                   />
-                  <FieldDescription>
-                  </FieldDescription>
                 </Field>
-                <Field>
+                {/* <Field>
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <Input id="password" type="password" required />
                   <FieldDescription>
@@ -100,11 +92,18 @@ export default function RegisterUser() {
                   <FieldDescription>
                     Please confirm your password.
                   </FieldDescription>
-                </Field>
+                </Field> */}
+                <PasswordFields />
                 <Field>
                   <Button type="submit">Create Account</Button>
                 </Field>
               </FieldGroup>
+              <FieldDescription className="text-center">
+                Already have an account? {" "}
+                <a href="/login" className="underline underline-offset-4">
+                  Login
+                </a>
+              </FieldDescription>
             </form>
           </div>
         </div>
